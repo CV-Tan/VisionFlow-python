@@ -1,0 +1,55 @@
+"""归一化节点"""
+
+import cv2
+import numpy as np
+from core.node_base import Property, PropertyGroupNames
+from core.node_selectable import OpenCVNodeDataBase
+from core.data_packet import FlowableResult
+from core.workflow import WorkflowEngine
+
+
+class Normalize(OpenCVNodeDataBase):
+    """图像归一化节点"""
+    # 节点所属分组（用于UI分类）
+    __group__ = "图像预处理模块"
+    # Alpha属性（目标范围的下限或归一化因子）
+    alpha = Property(0.0, name="Alpha", group=PropertyGroupNames.RUN_PARAMETERS)
+    # Beta属性（目标范围的上限）
+    beta = Property(255.0, name="Beta", group=PropertyGroupNames.RUN_PARAMETERS)
+    # 归一化类型属性
+    norm_type = Property("MinMax", name="归一化类型", group=PropertyGroupNames.RUN_PARAMETERS,
+                         editor="choices", choices=["MinMax", "L1", "L2", "Inf"])
+
+    def __init__(self):
+        """初始化归一化节点"""
+        # 调用父类构造函数
+        super().__init__()
+        # 设置节点显示名称
+        self.name = "归一化"
+
+    def invoke_core(self, src, from_node, diagram) -> FlowableResult:
+        # 获取输入图像（优先使用_prepared_input，否则使用上游节点的mat）
+        mat = self._require_input_mat(from_node)
+        # 如果输入图像为空，返回错误结果
+        if mat is None:
+            return self.error(None, "无输入图像")
+        # 归一化类型映射字典
+        nmap = {
+            "MinMax": cv2.NORM_MINMAX,  # 最小-最大归一化
+            "L1": cv2.NORM_L1,          # L1范数归一化
+            "L2": cv2.NORM_L2,          # L2范数归一化
+            "Inf": cv2.NORM_INF         # 无穷范数归一化
+        }
+
+        norm_code = nmap.get(self.norm_type, cv2.NORM_MINMAX)
+        alpha = float(self.alpha)
+        beta = float(self.beta)
+
+        # MinMax 场景下若上下限写反会造成结果接近全黑，自动纠正为升序区间
+        if norm_code == cv2.NORM_MINMAX and alpha > beta:
+            alpha, beta = beta, alpha
+
+        # 不再强制输出 float32，保持与输入一致的类型，避免 0~1 浮点图在 UI 中发黑
+        result = cv2.normalize(mat, None, alpha, beta, norm_code, dtype=-1)
+        # 返回成功结果
+        return self.ok(result)

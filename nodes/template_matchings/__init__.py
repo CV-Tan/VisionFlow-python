@@ -1,0 +1,13 @@
+from nodes.template_matchings.template_base import ITemplateMatchingGroupableNode, MatcherType, NormType, OpenCVTemplateMatchingNodeBase
+from nodes.template_matchings.template_matching import TemplateMatchingNode, TemplateBase64MatchingNode, BestMatchBase64TemplateMatchingNode
+from nodes.template_matchings.sift_matching import SiftFeatureMatchingNode, SiftBase64FeatureMatchingNode
+from nodes.template_matchings.surf_matching import SurfFeatureMatchingNode, SurfBase64FeatureMatchingNode
+from nodes.template_matchings.orb_matching import OrbFeatureMatchingNode
+from nodes.template_matchings.hsv_blob import HSVBlobMatchingNode, HSVInRangeRenderBlobMatchingNode
+from nodes.template_matchings.xfeat_match import XFeatMatchingNode
+from nodes.template_matchings.edge_matching import EdgeMatchingNode
+from nodes.template_matchings.shape_context_matching import ShapeContextMatchingNode
+from nodes.template_matchings.chamfer_matching import ChamferMatchingNode
+from nodes.template_matchings.sad_matching import SADMatchingNode
+from nodes.template_matchings.ncc_matching import NCCMatchingNode
+

@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""VisionFlow PyInstaller 打包脚本 — 跨平台支持 (Linux / Windows / macOS)
-用法：
+# -*- coding: utf-8 -*-
+"""VisionFlow PyInstaller build script — Cross-platform (Linux / Windows / macOS)
+Usage:
     Linux/macOS:   python3 build_visionflow.py
     Windows:       python build_visionflow.py
 """
-import os
+import io
 import sys
+# Force UTF-8 on Windows to avoid cp1252 codec errors
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+import os
 import platform
 
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -195,14 +200,14 @@ args.extend([
 # 4. 运行打包
 # ------------------------------------------------------------------
 print("=" * 60)
-print("VisionFlow PyInstaller 打包")
-print(f"平台: {platform.system()} {platform.machine()}")
+print("VisionFlow PyInstaller Build")
+print(f"Platform: {platform.system()} {platform.machine()}")
 print(f"Python: {platform.python_version()}")
 print("=" * 60)
-print(f"工作目录: {SRC_DIR}")
-print(f"数据文件数量: {len(data_files)}")
-print(f"Hidden imports 数量: {len(HIDDEN_IMPORTS)}")
-print(f"分隔符: '{SEP}'")
+print(f"Working dir: {SRC_DIR}")
+print(f"Data files: {len(data_files)}")
+print(f"Hidden imports: {len(HIDDEN_IMPORTS)}")
+print(f"Separator: '{SEP}'")
 print("-" * 60)
 
 PyInstaller.__main__.run(args)
@@ -211,9 +216,9 @@ exe_name = "VisionFlow.exe" if platform.system() == "Windows" else "VisionFlow"
 output_path = os.path.join(SRC_DIR, 'dist', exe_name)
 
 print("=" * 60)
-print("打包完成!")
-print(f"输出路径: {output_path}")
+print("Build complete!")
+print(f"Output: {output_path}")
 if os.path.exists(output_path):
     size_mb = os.path.getsize(output_path) / (1024 * 1024)
-    print(f"文件大小: {size_mb:.1f} MB")
+    print(f"Size: {size_mb:.1f} MB")
 print("=" * 60)
